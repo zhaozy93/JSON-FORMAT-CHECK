@@ -1,0 +1,23 @@
+{
+  "name": "json-format-check",
+  "version": "0.0.1",
+  "description": "json-format-check is a FE tools that allows you to state and validate JSON in Javascript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascript",
+    "object",
+    "json",
+    "format",
+    "schema",
+    "check"
+  ],
+  "author": "johnny <zhaozy93@outllok.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhaozy93/JSON-FORMATE-CHECK"
+  }
+}
