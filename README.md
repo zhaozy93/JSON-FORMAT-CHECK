@@ -1,4 +1,4 @@
-# JSON-FORMATE-CHECK
+# JSON-FORMAT-CHECK
 
 ## The Problem:
 Everytime when you send some data to servicer, they will check your role, your authority then check your data, at last processing the data that you send to them.
