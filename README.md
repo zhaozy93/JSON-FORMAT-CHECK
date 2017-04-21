@@ -99,7 +99,7 @@ you can find that your json data is not pass the validation because the school a
 * each one attr should corresponding one attr with same name in scheme object
 
 scheme attr name| required | description | 解释 | *
-:------------ | :------------ | :------------ | :------------: | ------------:
+:------------ | :------------ | :------------ | :------------: | :------------:
 name | required | used in return as one flag to quiclky find error data|用于元素检查失败时返回的标志符 | 
 type | required | type of attr | 元素的类型 | [Object, Array, Number, String, Null, Undefined, Regex, Date ]
 required | not | attr is required? default is false | 元素是否必须填写，默认false，即不是必须存在 | [true, false]
