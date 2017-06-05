@@ -1,6 +1,6 @@
 {
   "name": "json-format-check",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "json-format-check is a FE tools that allows you to state and validate JSON in Javascript.",
   "main": "index.js",
   "scripts": {
