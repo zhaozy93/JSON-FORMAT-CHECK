@@ -44,7 +44,15 @@ function checkScheme(scheme, target){
     // }
     // if param is not must required and the item is not provided, then just break
     if(!rule['required'] && !item){
-      break;
+      continue;
+    }
+    // if allowNull in this param, and the value is Null, then just jump into next param
+    if(rule['allowNull'] && getType(item) === 'Null'){
+      continue;
+    }
+    // if allowNull in this param, and the value is Null, then just jump into next param
+    if(rule['allowUndefined'] && getType(item) === 'Undefined'){
+      continue;
     }
     // if param is required, but not provided return false
     if(rule['required'] && !item){
@@ -52,16 +60,10 @@ function checkScheme(scheme, target){
           success: false,
           rule: 'required',
           param: key,
-          descript: `${key} is required, but not provided`
+          descript: `${key} is required, but not provided`,
+          msgZh: `请填写${rule.name}信息`,
+          forDev: false
       }
-    }
-    // if allowNull in this param, and the value is Null, then just jump into next param
-    if(rule['allowNull'] && getType(item) === 'Null'){
-      break;
-    }
-    // if allowNull in this param, and the value is Null, then just jump into next param
-    if(rule['allowUndefined'] && getType(item) === 'Undefined'){
-      break;
     }
     // has type but not excepted return false
     if(rule['type'] !== getType(item)) {
@@ -69,7 +71,8 @@ function checkScheme(scheme, target){
         success: false,
         rule: 'type',
         param: key,
-        descript: `excepted ${rule['type']}, but get ${getType(item)}`
+        descript: `excepted ${rule['type']}, but get ${getType(item)}`,
+        forDev: true
       }
     }
     // if enum is provided, the value should be in this enum array
@@ -78,7 +81,9 @@ function checkScheme(scheme, target){
           success: false,
           rule: 'enum',
           param: key,
-          descript: `${key} should be in provided array, but not find`
+          descript: `${key} should be in provided array, but not find`,
+          msgZh: `${rule.name}信息应该为固定选择值`,
+          forDev: false
       }
     }
     // if min is provided, then check the length or value 
@@ -89,7 +94,9 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'min',
             param: key,
-            descript: `min of ${key} is ${rule['min']}, but get ${item}`
+            descript: `min of ${key} is ${rule['min']}, but get ${item}`,
+            msgZh: `${rule.name}信息小于最小限制值`,
+            forDev: false
           } 
         }
       }else if(getType(item) === 'Array' || getType(item) === 'String'){
@@ -98,7 +105,9 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'min',
             param: key,
-            descript: `min length of ${key} is ${rule['min']}, but get ${item.length}`
+            descript: `min length of ${key} is ${rule['min']}, but get ${item.length}`,
+            msgZh: `${rule.name}信息长度小于最小长度`,
+            forDev: false
           } 
         }
       }else{
@@ -106,7 +115,8 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'min',
             param: key,
-            descript: `${key} is not Array、 String or Number, cannot set min check`
+            descript: `${key} is not Array、 String or Number, cannot set min check`,
+            forDev: true
         }
       }
     }
@@ -118,8 +128,10 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'max',
             param: key,
-            descript: `max of ${key} is ${rule['max']}, but get ${item}`
-          } 
+            descript: `max of ${key} is ${rule['max']}, but get ${item}`,
+            msgZh: `${rule.name}信息大于最大限制值`,
+            forDev: false
+          }
         }
       }else if(getType(item) === 'Array' || getType(item) === 'String'){
         if(item.length > rule['max']){
@@ -127,7 +139,9 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'max',
             param: key,
-            descript: `max length of ${key} is ${rule['max']}, but get ${item.length}`
+            descript: `max length of ${key} is ${rule['max']}, but get ${item.length}`,
+            msgZh: `${rule.name}信息长度大于最大长度`,
+            forDev: false
           } 
         }
       }else{
@@ -135,7 +149,8 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'max',
             param: key,
-            descript: `${key} is not Array、 String or Number, cannot set min check`
+            descript: `${key} is not Array、 String or Number, cannot set min check`,
+            forDev: true
         }
       }
     }
@@ -150,7 +165,8 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'pattern',
             param: key,
-            descript: `the pattern "${rule['pattern']}" provided in ${key} is not correct`
+            descript: `the pattern "${rule['pattern']}" provided in ${key} is not correct`,
+            forDev: true
         }
       }
       if(!reg.test(item)){
@@ -158,7 +174,9 @@ function checkScheme(scheme, target){
             success: false,
             rule: 'pattern',
             param: key,
-            descript: `the ${item} is not pass the test with pattern "${rule['pattern']}" provided in ${key}`
+            descript: `the ${key} is not pass the test with pattern "${rule['pattern']}" provided in ${key}`,
+            msgZh: `${rule.name}信息格式不符合要求`,
+            forDev: false
         }
       }
     }
@@ -169,7 +187,8 @@ function checkScheme(scheme, target){
           success: false,
           rule: 'items',
           param: key,
-          descript: `the ${item} is not Array type, so should not have the items rule`
+          descript: `the ${key} is not Array type, so should not have the items rule`,
+          forDev: true
         }
       }
       let len = item.length;
@@ -189,10 +208,11 @@ function checkScheme(scheme, target){
           success: false,
           rule: 'attrs',
           param: key,
-          descript: `the ${item} is not Object type, so should not have the attrs rule`
+          descript: `the ${key} is not Object type, so should not have the attrs rule`,
+          forDev: true
         }
       }
-      let result = checkScheme(rule['attrs'],item);
+      let result = checkScheme(rule['attrs'], item);
       if(!result.success){
         return Object.assign({}, result, {param: key});
       }
@@ -203,29 +223,29 @@ function checkScheme(scheme, target){
 
 
 function Object_format_check(scheme, target){
-	if(getType(scheme) !== 'Object'){
-  	return 'Scheme type error';
-  }
-  let schemeDefault = {
-    name: {
-      name: 'Scheme type error',
-      type: 'String',
-      required: true
-    },
-    type: {
-      name: 'Scheme type error',
-      type: 'String',
-      enum: ['Object', 'Array', 'Number', 'String', 'Null', 'Undefined', 'Regex'],
-      required: true
-    }
-  }
-  let keys = Object.keys(scheme);
-  for(let i=0; i< keys.length; i++){
-    let result = checkScheme(schemeDefault, scheme[keys[i]]);
-    if(!result.success){
-      return {success: false, descript: 'I will not tell you where are incorrect in your scheme Object, just see it detailed'}
-    }
-  }
+	// if(getType(scheme) !== 'Object'){
+  // 	return 'Scheme type error';
+  // }
+  // let schemeDefault = {
+  //   name: {
+  //     name: 'Scheme type error',
+  //     type: 'String',
+  //     required: true
+  //   },
+  //   type: {
+  //     name: 'Scheme type error',
+  //     type: 'String',
+  //     enum: ['Object', 'Array', 'Number', 'String', 'Null', 'Undefined', 'Regex'],
+  //     required: true
+  //   }
+  // }
+  // let keys = Object.keys(scheme);
+  // for(let i=0; i< keys.length; i++){
+  //   let result = checkScheme(schemeDefault, scheme[keys[i]]);
+  //   if(!result.success){
+  //     return {success: false, descript: 'I will not tell you where is incorrect in your scheme Object, just see it detailed'}
+  //   }
+  // }
   
   return checkScheme(scheme, target);
 }
